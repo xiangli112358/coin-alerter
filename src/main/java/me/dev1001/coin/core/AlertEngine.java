@@ -86,7 +86,7 @@ public class AlertEngine {
     private Notification buildNotification(Rule rule, PriceInfo current) {
         Notification notification = new Notification();
         notification.setTitle("Act price alert");
-        notification.setMessage(rule.desc() + ", current price is " + current.getLast());
+        notification.setMessage(rule.desc() + ", price: " + current.getLast());
         return notification;
     }
 
