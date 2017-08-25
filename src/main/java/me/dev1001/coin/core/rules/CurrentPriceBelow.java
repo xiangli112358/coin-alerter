@@ -1,11 +1,13 @@
-package me.dev1001.coin.engine.rules;
+package me.dev1001.coin.core.rules;
 
-import me.dev1001.coin.engine.Rule;
+import me.dev1001.coin.core.Rule;
 import me.dev1001.coin.entity.PriceInfo;
-import me.dev1001.coin.service.PriceStore;
+import me.dev1001.coin.core.PriceStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -15,12 +17,15 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 @Component("currentPriceBelow")
 public class CurrentPriceBelow implements Rule {
+
+    @Value("${rule.price.below}")
     private volatile BigDecimal below;
 
     @Autowired
     private PriceStore priceStore;
 
-    public CurrentPriceBelow(BigDecimal below) {
+    @PostConstruct
+    public void init() {
         setBelow(below);
     }
 
@@ -37,5 +42,11 @@ public class CurrentPriceBelow implements Rule {
 
     public void setBelow(BigDecimal below) {
         checkArgument(below.compareTo(BigDecimal.ZERO) > 0, "below must greater than 0");
-        this.below = below;    }
+        this.below = below;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("CurrentPriceBelow{%f}", below);
+    }
 }

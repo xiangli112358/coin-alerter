@@ -72,6 +72,7 @@
         <dependency>
             <groupId>com.github.sps.pushover.net</groupId>
             <artifactId>pushover-client</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 

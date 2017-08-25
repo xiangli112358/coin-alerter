@@ -1,4 +1,4 @@
-package me.dev1001.coin.engine;
+package me.dev1001.coin.core;
 
 /**
  * @author hongzong.li

@@ -6,7 +6,6 @@ package me.dev1001.coin.entity;
 public class Notification {
     private String title;
     private String message;
-    private String sound;
 
     public String getTitle() {
         return title;
@@ -24,11 +23,11 @@ public class Notification {
         this.message = message;
     }
 
-    public String getSound() {
-        return sound;
-    }
-
-    public void setSound(String sound) {
-        this.sound = sound;
+    @Override
+    public String toString() {
+        return "Notification{" +
+                "title='" + title + '\'' +
+                ", message='" + message + '\'' +
+                '}';
     }
 }

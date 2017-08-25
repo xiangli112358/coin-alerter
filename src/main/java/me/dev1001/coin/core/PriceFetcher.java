@@ -1,4 +1,4 @@
-package me.dev1001.coin.service;
+package me.dev1001.coin.core;
 
 import me.dev1001.coin.entity.PriceInfo;
 
