@@ -66,10 +66,10 @@ public class AlertEngine {
 
     private void checkAlerts() {
         if (on) {
-            Stream<Rule> hitRules = rules.stream().filter(Rule::hit);
+            List<Rule> hitRules = rules.stream().filter(Rule::hit).collect(Collectors.toList());
             logger.info("Check alerts hit rules: {}", hitRules);
 
-            hitRules.map(this::buildNotification)
+            hitRules.stream().map(this::buildNotification)
                     .collect(Collectors.toList())
                     .forEach(notification -> notifier.sendNotification(notification));
         }

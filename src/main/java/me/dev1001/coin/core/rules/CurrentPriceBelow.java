@@ -3,6 +3,8 @@ package me.dev1001.coin.core.rules;
 import me.dev1001.coin.core.Rule;
 import me.dev1001.coin.entity.PriceInfo;
 import me.dev1001.coin.core.PriceStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -24,6 +26,9 @@ public class CurrentPriceBelow implements Rule {
     @Autowired
     private PriceStore priceStore;
 
+    private static final Logger logger = LoggerFactory.getLogger(CurrentPriceBelow.class);
+
+
     @PostConstruct
     public void init() {
         setBelow(below);
@@ -42,6 +47,7 @@ public class CurrentPriceBelow implements Rule {
 
     public void setBelow(BigDecimal below) {
         checkArgument(below.compareTo(BigDecimal.ZERO) > 0, "below must greater than 0");
+        logger.info("Price blow is set to " + below);
         this.below = below;
     }
 
