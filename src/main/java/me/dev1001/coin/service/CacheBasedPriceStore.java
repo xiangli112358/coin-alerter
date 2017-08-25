@@ -2,6 +2,7 @@ package me.dev1001.coin.service;
 
 import me.dev1001.coin.entity.PricePoint;
 import me.dev1001.coin.util.DateRange;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -13,6 +14,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 /**
  * @author hongzong.li
  */
+@Service
 public class CacheBasedPriceStore implements PriceStore {
 
     private final TreeMap<Long, PricePoint> pricePoints = new TreeMap<>();

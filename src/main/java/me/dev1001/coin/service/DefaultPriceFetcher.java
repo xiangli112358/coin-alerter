@@ -2,8 +2,9 @@ package me.dev1001.coin.service;
 
 import me.dev1001.coin.entity.PriceInfo;
 import me.dev1001.coin.util.HttpClientHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,10 +12,11 @@ import java.util.Map;
 /**
  * @author hongzong.li
  */
+@Service
 public class DefaultPriceFetcher implements PriceFetcher {
     private static final String PRICE_API_URL = "https://www.jubi.com/api/v1/ticker";
 
-    private static final Log logger = LogFactory.getLog(DefaultPriceFetcher.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultPriceFetcher.class);
 
     @Override
     public PriceInfo fetchPrice(String coin) {
