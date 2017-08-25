@@ -36,6 +36,9 @@ public class CurrentPriceAbove implements Rule {
     @Override
     public boolean hit() {
         PricePoint pricePoint = priceStore.getCurrentPrice();
+        if (pricePoint == null) {
+            return false;
+        }
         return pricePoint.getPriceInfo().getLast().compareTo(above) > 0;
     }
 

@@ -20,59 +20,40 @@ public class CacheBasedPriceStore implements PriceStore {
 
     private final int maxSize;
 
-    private final Lock lock = new ReentrantLock();
-
     public CacheBasedPriceStore(int maxSize) {
         checkArgument(maxSize > 0, "maxSize must greater than 0");
         this.maxSize = maxSize;
     }
 
     @Override
-    public Map<Long, PricePoint> getPricesByRange(DateRange dateRange) {
-        lock.lock();
-        try {
-            return new TreeMap<>(
+    public synchronized Map<Long, PricePoint> getPricesByRange(DateRange dateRange) {
+        return new TreeMap<>(
                 pricePoints.subMap(
-                    dateRange.getFrom().getTime(), true,
-                    dateRange.getTo().getTime(), true
+                        dateRange.getFrom().getTime(), true,
+                        dateRange.getTo().getTime(), true
                 ));
-        } finally {
-            lock.unlock();
-        }
 
     }
 
     @Override
-    public boolean add(PricePoint pricePoint) {
-        lock.lock();
-        try {
-            pricePoints.put(pricePoint.getFetchDate().getTime(), pricePoint);
-            if (pricePoints.size() > maxSize) {
-                pricePoints.remove(pricePoints.firstKey());
-            }
-            return true;
-        } finally {
-          lock.unlock();
+    public synchronized boolean add(PricePoint pricePoint) {
+        pricePoints.put(pricePoint.getFetchDate().getTime(), pricePoint);
+        if (pricePoints.size() > maxSize) {
+            pricePoints.remove(pricePoints.firstKey());
         }
+        return true;
     }
 
     @Override
-    public PricePoint getCurrentPrice() {
-        lock.lock();
-        try {
-           return pricePoints.lastEntry().getValue();
-        } finally {
-            lock.unlock();
+    public synchronized PricePoint getCurrentPrice() {
+        if (pricePoints.isEmpty()) {
+            return null;
         }
+        return pricePoints.lastEntry().getValue();
     }
 
     @Override
-    public Map<Long, PricePoint> dump() {
-        lock.lock();
-        try {
-            return new TreeMap<>(pricePoints);
-        } finally {
-            lock.unlock();
-        }
+    public synchronized Map<Long, PricePoint> dump() {
+        return new TreeMap<>(pricePoints);
     }
 }

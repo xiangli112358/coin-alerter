@@ -1,5 +1,6 @@
 package me.dev1001.coin.core;
 
+import com.google.common.collect.Lists;
 import me.dev1001.coin.entity.Notification;
 import me.dev1001.coin.entity.PriceInfo;
 import me.dev1001.coin.entity.PricePoint;
@@ -17,7 +18,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -54,36 +54,39 @@ public class AlertEngine {
 
     @PostConstruct
     public void init() {
-        setAlertPeriod(alertPeriod);
-        setFetchPeriod(alertPeriod);
+        checkArgument(alertPeriod > 0, "alert period must greater than 0");
+        checkArgument(fetchPeriod > 0, "fetch period must greater than 0");
 
         logger.info("Loading alert rules...");
         rules.forEach(rule -> logger.info("Alert rule " + rule + " loaded"));
 
         checkAlertScheduler.scheduleAtFixedRate(this::checkAlerts, alertPeriod, alertPeriod, TimeUnit.SECONDS);
-        fetchPriceScheduler.scheduleAtFixedRate(this::fetchPrice, fetchPeriod, fetchPeriod, TimeUnit.SECONDS);
+        fetchPriceScheduler.scheduleAtFixedRate(this::fetchPriceAndStore, fetchPeriod, fetchPeriod, TimeUnit.SECONDS);
     }
 
     private void checkAlerts() {
+        logger.info("Checking alerts...");
         if (on) {
             List<Rule> hitRules = rules.stream().filter(Rule::hit).collect(Collectors.toList());
             logger.info("Check alerts hit rules: {}", hitRules);
 
-            hitRules.stream().map(this::buildNotification)
+            hitRules.stream().map(rule ->buildNotification(rule, priceStore.getCurrentPrice().getPriceInfo()))
                     .collect(Collectors.toList())
                     .forEach(notification -> notifier.sendNotification(notification));
         }
     }
 
-    private void fetchPrice() {
+    private void fetchPriceAndStore() {
+        logger.info("Fetching price...");
         PriceInfo actPrice = priceFetcher.fetchPrice("act");
+        logger.info("Fetch price result: {}", actPrice);
         priceStore.add(new PricePoint(new Date(), actPrice));
     }
 
-    private Notification buildNotification(Rule rule) {
+    private Notification buildNotification(Rule rule, PriceInfo current) {
         Notification notification = new Notification();
-        notification.setTitle("Coin price alert");
-        notification.setMessage(rule.desc());
+        notification.setTitle("Act price alert");
+        notification.setMessage(rule.desc() + ", current price is " + current.getLast());
         return notification;
     }
 
@@ -91,16 +94,6 @@ public class AlertEngine {
     public void shutdown() {
         checkAlertScheduler.shutdown();
         fetchPriceScheduler.shutdown();
-    }
-
-    public void setAlertPeriod(int period) {
-        checkArgument(alertPeriod > 0, "alert period must greater than 0");
-        this.alertPeriod = period;
-    }
-
-    public void setFetchPeriod(int period) {
-        checkArgument(fetchPeriod > 0, "fetch period must greater than 0");
-        this.fetchPeriod = period;
     }
 
     public int getAlertPeriod() {

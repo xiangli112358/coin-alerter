@@ -37,6 +37,9 @@ public class CurrentPriceBelow implements Rule {
     @Override
     public boolean hit() {
         PriceInfo priceInfo = priceStore.getCurrentPrice().getPriceInfo();
+        if (priceInfo == null) {
+            return false;
+        }
         return priceInfo.getLast().compareTo(below) < 0;
     }
 
