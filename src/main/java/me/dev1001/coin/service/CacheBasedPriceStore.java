@@ -26,7 +26,6 @@ public class CacheBasedPriceStore implements PriceStore {
         this.maxSize = maxSize;
     }
 
-
     @Override
     public Map<Long, PricePoint> getPricesByRange(DateRange dateRange) {
         lock.lock();
@@ -53,6 +52,16 @@ public class CacheBasedPriceStore implements PriceStore {
             return true;
         } finally {
           lock.unlock();
+        }
+    }
+
+    @Override
+    public PricePoint getCurrentPrice() {
+        lock.lock();
+        try {
+           return pricePoints.lastEntry().getValue();
+        } finally {
+            lock.unlock();
         }
     }
 }

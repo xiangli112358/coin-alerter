@@ -13,4 +13,6 @@ public interface PriceStore {
     Map<Long, PricePoint> getPricesByRange(DateRange dateRange);
 
     boolean add(PricePoint pricePoint);
+
+    PricePoint getCurrentPrice();
 }
