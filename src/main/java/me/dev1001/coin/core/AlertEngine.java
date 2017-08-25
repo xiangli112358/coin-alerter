@@ -1,6 +1,5 @@
 package me.dev1001.coin.core;
 
-import com.google.common.collect.Lists;
 import me.dev1001.coin.entity.Notification;
 import me.dev1001.coin.entity.PriceInfo;
 import me.dev1001.coin.entity.PricePoint;

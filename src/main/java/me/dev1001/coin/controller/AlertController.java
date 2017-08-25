@@ -25,5 +25,4 @@ public class AlertController {
         alertEngine.turnOff();
         return "Alert engine turned off";
     }
-
 }

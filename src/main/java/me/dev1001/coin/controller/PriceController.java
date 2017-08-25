@@ -1,6 +1,5 @@
 package me.dev1001.coin.controller;
 
-import me.dev1001.coin.core.AlertEngine;
 import me.dev1001.coin.core.PriceStore;
 import me.dev1001.coin.entity.PricePoint;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +16,6 @@ import java.util.Map;
 public class PriceController {
     @Autowired
     private PriceStore priceStore;
-
-    @Autowired
-    private AlertEngine alertEngine;
 
     @RequestMapping("/current")
     public PricePoint currentPrice() {
