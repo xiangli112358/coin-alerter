@@ -49,7 +49,7 @@ public class CurrentPriceAbove implements Rule {
 
     public void setAbove(BigDecimal above) {
         checkArgument(above.compareTo(BigDecimal.ZERO) > 0, "above must greater than 0");
-        logger.info("Price above value is set to "+ above);
+        logger.info("Price above value is set to " + above);
         this.above = above;
     }
 

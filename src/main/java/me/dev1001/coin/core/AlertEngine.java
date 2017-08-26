@@ -64,22 +64,32 @@ public class AlertEngine {
     }
 
     private void checkAlerts() {
-        logger.info("Checking alerts...");
-        if (on) {
-            List<Rule> hitRules = rules.stream().filter(Rule::hit).collect(Collectors.toList());
-            logger.info("Check alerts hit rules: {}", hitRules);
+        try {
+            logger.info("Checking alerts...");
+            if (on) {
+                List<Rule> hitRules = rules.stream().filter(Rule::hit).collect(Collectors.toList());
+                logger.info("Check alerts hit rules: {}", hitRules);
 
-            hitRules.stream().map(rule ->buildNotification(rule, priceStore.getCurrentPrice().getPriceInfo()))
-                    .collect(Collectors.toList())
-                    .forEach(notification -> notifier.sendNotification(notification));
+                hitRules.stream().map(rule ->buildNotification(rule, priceStore.getCurrentPrice().getPriceInfo()))
+                        .collect(Collectors.toList())
+                        .forEach(notification -> notifier.sendNotification(notification));
+            }
+        } catch (Exception e) {
+            logger.error("Check alert scheduler error occurred", e);
         }
+
     }
 
     private void fetchPriceAndStore() {
-        logger.info("Fetching price...");
-        PriceInfo actPrice = priceFetcher.fetchPrice("act");
-        logger.info("Fetch price result: {}", actPrice);
-        priceStore.add(new PricePoint(new Date(), actPrice));
+        try {
+            logger.info("Fetching price...");
+            PriceInfo actPrice = priceFetcher.fetchPrice("act");
+            logger.info("Fetch price result: {}", actPrice);
+            priceStore.add(new PricePoint(new Date(), actPrice));
+        } catch (Exception e) {
+            logger.error("Fetch price scheduler error occurred", e);
+        }
+
     }
 
     private Notification buildNotification(Rule rule, PriceInfo current) {
